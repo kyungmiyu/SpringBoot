@@ -1,0 +1,25 @@
+# applicatoin.properties 보다 가독성 좋게 만든 것
+server:
+  port: 8383
+
+# Oracle Connect
+spring:
+
+  # File Size
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+  # dao의 datasource
+  datasource:
+   driver-class-name: oracle.jdbc.driver.OracleDriver
+   url: jdbc:oracle:thin:@localhost:1521/xe
+   username: scott
+   password: tiger
+
+  # view Resolver
+  mvc:
+    view:
+      prefix: /WEB-INF/views/
+      suffix: .jsp      
+   

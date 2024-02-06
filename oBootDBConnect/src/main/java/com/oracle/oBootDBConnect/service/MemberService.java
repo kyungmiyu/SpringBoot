@@ -13,6 +13,7 @@ public class MemberService {
 	
 	private final MemberRepository memberRepository;
 	
+	// MemberService ms = new MemberService(); 전통적
 	@Autowired
 	public MemberService(MemberRepository memberRepository) {
 		this.memberRepository = memberRepository;
@@ -20,6 +21,8 @@ public class MemberService {
 	
 	// 회원가입
 	public Long memberSave(Member1 member) {
+		System.out.println("MemberService memberSave start...");
+		 memberRepository.save(member);
 		return member.getId();
 	}
 	
