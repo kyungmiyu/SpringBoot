@@ -157,11 +157,11 @@ public class JpaRestApiController {
 	 *   URI 상에서 '{ }' 로 감싸여있는 부분과 동일한 변수명을 사용하는 방법
 	 *   해당 데이터가 있으면 업데이트를 하기에 
 	 *   PUT요청이 여러번 실행되어도 해당 데이터는 같은 상태이기에 멱등(어떤 작업을 여러 번 적용하더라도 결과가 변하지 않는 성질)
-	 *   {}로 url에 프라이머리 키를 넘겨줌
+	 *   {}로 url에 보통 프라이머리 키를 넘겨줌
 	 */
-	@PutMapping("/restApi/v21/members/{id}") // 
-	public UpdateMemberResponse updateMemberv21 (@PathVariable("id") Long id, 
-												 @RequestBody @Valid UpdateMemberRequest umember) {
+	@PutMapping("/restApi/v21/members/{id}") // url 받을때 pathvariable
+	public UpdateMemberResponse updateMemberv21 (@PathVariable("id") Long id,
+												 @RequestBody @Valid UpdateMemberRequest umember) { 
 			
 		memberService.updateMember(id, umember.getName(), umember.getSal());
 		Member findMember = memberService.findByMember(id);

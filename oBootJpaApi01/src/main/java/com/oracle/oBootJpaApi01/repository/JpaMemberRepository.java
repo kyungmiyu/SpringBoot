@@ -19,7 +19,7 @@ public class JpaMemberRepository implements MemberRepository {
 	// 모든 생성자를 만들때는 AllArgsConstructor
 	
 	@Override
-	public List<Member> findAll() {
+	public List<Member> findAll() {                                        // Member m의 타입 
 		List<Member> memberList = em.createQuery("select m from Member m", Member.class).getResultList();
 		System.out.println("JpaMemberRepository findAll memberList.size()->"+memberList.size());
 		return memberList;
@@ -28,6 +28,7 @@ public class JpaMemberRepository implements MemberRepository {
 	@Override
 	public Long save(@Valid Member member) {
 		System.out.println("JpaMemberRepository save before...");
+		// 영속성 관리를 안해주면 insert로 들어감
 		em.persist(member); // 저장하면서 sequence > call by reference > 기본키 키 묻어나옴
 		return member.getId();
 	}
