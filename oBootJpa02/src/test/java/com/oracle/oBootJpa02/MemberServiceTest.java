@@ -14,10 +14,10 @@ import com.oracle.oBootJpa02.domain.Member;
 import com.oracle.oBootJpa02.repository.MemberRepository;
 import com.oracle.oBootJpa02.service.MemberService;
 
-//@SpringBootTest : 스프링 부트 띄우고 테스트(이게 없으면 @Autowired 다 실패)
-//반복 가능한 테스트 지원, 각각의 테스트를 실행할 때마다 트랜잭션을 시작하고
-//테스트가 끝나면 트랜잭션을 강제로 롤백
-// 컨트롤 관점
+// @SpringBootTest : 스프링 부트 띄우고 테스트(이게 없으면 @Autowired 다 실패)
+// 반복 가능한 테스트 지원, 각각의 테스트를 실행할 때마다 트랜잭션을 시작하고
+// 테스트가 끝나면 트랜잭션을 강제로 롤백
+// 컨트롤러 관점
 @SpringBootTest
 @Transactional
 public class MemberServiceTest {
@@ -27,6 +27,8 @@ public class MemberServiceTest {
 	@Autowired
 	MemberRepository memberRepository;
 
+	// test 전에 실행되어야핧 메소드는 BeforeEach로 설정
+	// test 시작되기 전에 무조건 실행됨
 	@BeforeEach
 	public void before1() {
 		System.out.println("Test @BeforeEach...");
