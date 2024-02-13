@@ -4,14 +4,19 @@ import java.util.List;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.oracle.oBootMybatis01.model.Dept;
 import com.oracle.oBootMybatis01.model.Emp;
+import com.oracle.oBootMybatis01.model.EmpDept;
 import com.oracle.oBootMybatis01.service.EmpService;
 import com.oracle.oBootMybatis01.service.Paging;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,16 +24,15 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j
 public class EmpController {
-	
+	//생성자 1개일때 @Autowired 생략가능
 	private final EmpService es;
 	
 	@RequestMapping(value = "listEmp")
 	public String empList(Emp emp, Model model) {
 		System.out.println("EmpController Start listEmp...");
-		if (emp.getCurrentPage() == null) emp.setCurrentPage("1");
+		// if (emp.getCurrentPage() == null) emp.setCurrentPage("1");
 		// Emp 전체 count 14
 		int totalEmp = es.totalEmp();
-		model.addAttribute("totalEmp", totalEmp);
 		System.out.println("EmpController Start totalEmp->" + totalEmp);
 	
 		Paging page = new Paging(totalEmp, emp.getCurrentPage());
@@ -56,16 +60,17 @@ public class EmpController {
 ////		                    mapper ID   ,    Parameter
 //		emp = session.selectOne("tkEmpSelOne",    empno);
 //		System.out.println("emp->"+emp1);
-		model.addAttribute("emp", emp1);=
+		Emp emp = es.detailEmp(emp1.getEmpno());
+		model.addAttribute("emp",emp);		
 		return "detailEmp";
 	}
 	
 	
 	@GetMapping(value="updateFormEmp")
 	public String updateFormEmp(Emp emp1, Model model) {
-		System.out.println("EmpController Start updateForm");
+		System.out.println("EmpController Start updateForm...");
+	
 		Emp emp = es.detailEmp(emp1.getEmpno());
-		
 		System.out.println("emp.getEname()->" + emp.getEname());
 		System.out.println("emp.getHiredate()->" + emp.getHiredate());
 //		System.out.println("hiredate()->" + hiredate);
@@ -74,14 +79,13 @@ public class EmpController {
 		// 1. DTO  String hiredate
 		// 2. View : 단순조회 OK ,JSP에서 input type="date" 문제 발생
 		// 3. 해결책  : 년월일만 짤라 넣어 주어야 함
-		model.addAttribute("emp", emp);
-		
 		String hiredate = "";
 		if (emp.getHiredate() != null) {
 			hiredate = emp.getHiredate().substring(0, 10);
 			emp.setHiredate(hiredate);
 		}
 		System.out.println("hiredate->" + hiredate);
+		
 		model.addAttribute("emp", emp);
 		return "updateFormEmp";
 	}
@@ -95,11 +99,146 @@ public class EmpController {
 //
 //   	2. EmpDao updateEmp method 선언
 ////                              mapper ID   ,    Parameter
-//   updateCount = session.update("tkEmpUpdate",emp);
+		int updateCount = es.updateEmp(emp);
+		System.out.println("empController es.updateEmp updateCount-->"+updateCount);
+		model.addAttribute("uptCnt", updateCount);
+		model.addAttribute("kk3","Message Test");
 		
-		return "forward:listEmp";
+		// model에 저장된 데이터를 가지고 이동해서 model한테 저장하지 않더라도 데이터 유지 파라미터를 데리고 다니려면 forward를 써야함
+		return "forward:listEmp"; 
+//		return "redirect:listEmp"; // 단순한 페이지 이동 (컨트롤러의 이동일뿐)
 	}
 	
 	
+	@RequestMapping(value="writeFormEmp")
+	public String writeFormEmp(Model model) {
+		System.out.println("EmpController wirteFormEmp Start...");
+		// 관리자 사번 만 GET
+		List<Emp> empList = es.listManager();
+		System.out.println("EmpController writeForm empList.size()->" + empList.size());
+		model.addAttribute("empMngList", empList); // emp Manager List
+		
+		// 1. Service, Dao -> listManager
+		// 2. Mapper -> tkSelectManager
+		// 1) Emp table -> MGR에 등록된 정보 GET
+		
+		// 부서 코드명
+		List<Dept> deptList = es.deptSelect();
+		model.addAttribute("deptList", deptList);
+		System.out.println("EmpController writeForm deptList.size()->" + deptList.size());
+		
+		return "writeFormEmp";
+	}
+	
+	@PostMapping(value="writeEmp")
+	public String writeEmp(Emp emp, Model model) {
+		System.out.println("EmpController Start writeEmp...");
+		// Service, Dao, Mapper명 [insertEmp] 까지 -> insert
+		int insertResult = es.insertEmp(emp);
+		if (insertResult > 0) {
+			return "redirect:listEmp";
+		}
+		else {
+			model.addAttribute("msg", "입력 실패 확인해 보세요");
+			return "forward:writeFormEmp";
+		}
+	}
+	
+
+	@RequestMapping(value="writeFormEmp3")
+	public String writeFormEmp3(Model model) {
+		System.out.println("EmpController wirteFormEmp3 Start...");
+		// 관리자 사번 만 GET
+		List<Emp> empList = es.listManager();
+		System.out.println("EmpController writeFormEmp3 empList.size()->" + empList.size());
+		model.addAttribute("empMngList", empList); // emp Manager List
+		
+		// 1. Service, Dao -> listManager
+		// 2. Mapper -> tkSelectManager
+		// 1) Emp table -> MGR에 등록된 정보 GET
+		
+//		// 부서 코드명
+		List<Dept> deptList = es.deptSelect();
+		model.addAttribute("deptList", deptList); // dept
+		System.out.println("EmpController writeFormEmp3 deptList.size()->" + deptList.size());
+		return "writeFormEmp3";
+	}
+	
+	// Validation 참조
+	@PostMapping(value="writeEmp3")
+	public String writeEmp3(@ModelAttribute("emp") @Valid Emp emp, BindingResult result, Model model) {
+		System.out.println("EmpControllerStart writeEmp3...");
+		
+		// Validation 오류시 Result
+		if (result.hasErrors()) {
+			System.out.println("EmpController writeEmp3 hasErrors...");
+			model.addAttribute("msg", "BindingResult 입력 실패 확인해보세요");
+			return "forward:writeFormEmp3";
+		}
+		
+		// Service, Dao, Mapper명 [insertEmp] 까지 -> insert
+		int insertResult = es.insertEmp(emp);
+		if (insertResult > 0) return "redirect:listEmp";
+		else {
+			model.addAttribute("msg", "입력 실패 확인해보세요");
+			return "forward:writeFormEmp3";
+		}
+	}
+	
+	@GetMapping(value="confirm")
+	public String confirm(Emp emp1, Model model) {
+		Emp emp = es.detailEmp(emp1.getEmpno());
+		model.addAttribute("empno", emp1.getEmpno());
+		if (emp != null) {
+			System.out.println("empController confirm 중복된 사번입니다.");
+			model.addAttribute("msg", "중복된 사번입니다.");
+			return "forward:writeFormEmp";
+		} else {
+			System.out.println("empController confirm 사용 가능한 사번입니다.");
+			model.addAttribute("msg", "사용 가능한 사번입니다.");
+			return "forward:writeFormEmp";
+		}
+	}
+	
+	@RequestMapping(value="deleteEmp")
+	public String deleteEmp(Emp emp, Model model) {
+		System.out.println("EmpController Start delete...");
+		int result = es.deleteEmp(emp.getEmpno());
+		model.addAttribute("msg", "삭제완료");
+		return "redirect:listEmp";
+	}
+	
+	@RequestMapping(value="listSearch3") // dto 받음
+	public String listSearch3(Emp emp, Model model) {
+		// Emp 전체 Count
+		int totalEmp = es.condTotalEmp(emp);
+		System.out.println("EmpController listSearch3 totalEmp=>"+totalEmp);
+		// paging 작업
+		Paging page = new Paging(totalEmp, emp.getCurrentPage());
+		// Parameter emp --> Page만 추가 Setting
+		emp.setStart(page.getStart()); // 시작시 1
+		emp.setEnd(page.getEnd()); // 시작시 10
+		
+		List<Emp> listSearchEmp = es.listSearchEmp(emp);
+		System.out.println("EmpController listSearch3 listSearchEmp.size()->"+listSearchEmp.size());
+	
+		model.addAttribute("totalEmp", totalEmp);
+		model.addAttribute("listEmp", listSearchEmp);
+		model.addAttribute("page", page);
+		
+		return "list";
+	}
+	
+	@GetMapping(value="listEmpDept")
+	public String listEmpDept(Model model) {
+		System.out.println("EmpController listEmpDept Start...");
+		// Service Dao -> listEmpDept
+		// Mapper만 -> tkListEmpDept
+		List<EmpDept> listEmpDept = es.listEmpDept();
+		model.addAttribute("listEmpDept", listEmpDept);
+		
+		return "listEmpDept";
+	}
+
 	
 } // end of class

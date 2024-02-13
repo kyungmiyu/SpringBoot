@@ -16,6 +16,7 @@ public class SecurityConfig {
 	
 	@Bean
 	protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+		// 설정하지 않으면 security 화면으로 넘어감
 		http.cors(cors -> cors.disable())
 			.csrf(csrf -> csrf.disable());
 		return http.build();
