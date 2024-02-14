@@ -7,6 +7,19 @@
 	</select>
 	
 	<select id="tkEmpListAll" parameterType="Emp" resultType="Emp">
+	<![CDATA[
+		SELECT *
+		FROM
+		(
+			SELECT rownum rn, a.*
+			FROM (SELECT * FROM emp ORDER BY empno) a
+		)
+		WHERE rn >= #{start} 
+		AND rn <= #{end}
+	]]>	
+	</select>
+	
+	<select id="tkEmpListAll3" parameterType="Emp" resultType="Emp">
 		SELECT *
 		FROM
 		(
@@ -16,18 +29,19 @@
 		WHERE rn BETWEEN #{start} and #{end}	
 	</select>
 	
+	
 	<select id="tkEmpSelOne" parameterType="int" resultType="Emp">
 		SELECT * FROM emp WHERE empno = #{empno}
 	</select>
 	
-  <update id="tkEmpUpdate" parameterType="Emp">
+	<update id="tkEmpUpdate" parameterType="Emp">
 		 UPDATE emp SET ename = #{ename}, job = #{job}, mgr = #{mgr},
 					    sal = #{sal}, 
 					    hiredate = #{hiredate}, 
 		                <if test="#{comm}!=null"> 	comm = #{comm},    </if>
 		                deptno = #{deptno} 
 		 WHERE  empno = #{empno}
-   </update>
+    </update>
    
    <select id="tkSelectManager" resultType="Emp">
    		SELECT *
@@ -40,7 +54,7 @@
    </insert>
    
    <delete id="deleteEmp" parameterType="int">
-   		delete from emp where empno=#{empno}	
+   		DELETE FROM emp WHERE empno = #{empno}
    </delete>
    
    <select id="tkEmpSearchList3" parameterType="Emp" resultType="Emp">
@@ -48,20 +62,21 @@
 	   FROM 
 	   (
 		SELECT rownum rn, a.*
-		FROM (SELECT * FROM emp ORDER BY empno) a	   
+		FROM (SELECT * FROM emp 
+			   <choose>
+				   	<when test="search == 's_job'">
+				   		AND job LIKE '%' || #{keyword} || '%'
+				   	</when>
+				   	<when test="search == 's_ename">
+						AND ename LIKE '%' || #{keyword} || '%'   	
+				   	</when>
+				   	<otherwise>
+				   		AND job LIKE '%'
+				   	</otherwise>
+			   </choose>
+			  ORDER BY empno) a	   
 	   )
 	   WHERE rn BETWEEN #{start} AND #{end}
-	   <choose>
-		   	<when test="search == 's_job'">
-		   		AND job LIKE '%' || #{keyword} || '%'
-		   	</when>
-		   	<when test="search == 's_ename">
-				AND ename LIKE '%' || #{keyword} || '%'   	
-		   	</when>
-		   	<otherwise>
-		   		AND job LIKE '%'
-		   	</otherwise>
-	   </choose>
    </select>
    
    <select id="condEmpTotal" parameterType="Emp" resultType="int">

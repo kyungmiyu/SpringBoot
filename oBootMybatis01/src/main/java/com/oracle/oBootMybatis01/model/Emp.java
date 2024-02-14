@@ -18,6 +18,7 @@ public class Emp {
 	private int deptno;
 
 	// 조회용
+	// 테이블에 있는 정보와 페이지에 조회용 정보들을 DTO에 넣어둠
 	private String search;
 	private String keyword;
 	private String pageNum;

@@ -2,9 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.oracle.oBootMybatis01.EmpDeptMapper">
 	<select id="tkListEmpDept" resultType="EmpDept">
-		   select   e.empno, e.ename, e.job, d.deptno, d.loc  	
-		   from     emp e,   dept d 
-		   where    e.deptno=d.deptno 
-		   order by empno 
+		   SELECT e.empno, e.ename, e.job, d.deptno, d.loc  	
+		   FROM emp e, dept d 
+		   WHERE e.deptno = d.deptno 
+		   ORDER BY empno 
 	</select>
 </mapper>

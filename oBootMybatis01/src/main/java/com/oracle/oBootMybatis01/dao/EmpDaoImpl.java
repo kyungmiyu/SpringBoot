@@ -5,7 +5,6 @@ import java.util.List;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
-import com.oracle.oBootMybatis01.model.Dept;
 import com.oracle.oBootMybatis01.model.Emp;
 import com.oracle.oBootMybatis01.model.EmpDept;
 
@@ -138,7 +137,6 @@ public class EmpDaoImpl implements EmpDao {
 		}
 		return totEmpCount;
 	}
-	
 
 	@Override
 	public int deleteEmp(int empno) {
@@ -156,20 +154,18 @@ public class EmpDaoImpl implements EmpDao {
 		return result;
 	}
 
-
 	@Override
 	public List<EmpDept> listEmpDept() {
 		System.out.println("EmpDaoImpl listEmpDept Start...");
 		List<EmpDept> empDept = null;
 		try {
 			empDept = session.selectList("tkListEmpDept");
-			System.out.println("EmpDaoImpl listEmpDept empDept.size()" + empDept.size());
+			System.out.println("EmpDaoImpl listEmpDept empDept.size()->" + empDept.size());
 		} catch (Exception e) {
 			System.out.println("EmpDaoImpl listEmpDept Excpetion->" + e.getMessage());
 		}
 		return empDept;
 	}
 	
-
 
 }

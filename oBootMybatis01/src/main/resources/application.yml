@@ -16,12 +16,12 @@ spring:
     username: scott
     password: tiger
 
-      # Jpa Setting
+  # Jpa Setting
   jpa:
     show-sql: true
     # Operation --> create / none / update
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
       
    # view Resolver
   mvc:
@@ -29,6 +29,18 @@ spring:
       prefix: /WEB-INF/views/
       suffix: .jsp           
 
+  # Gmail Transfer
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: yu.km0304@gmail.com
+    password: pxdx jjql qxtd oxil
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls.enable: true
+      
 # Mybatis
 mybatis:
   config-location: classpath:configuration.xml
@@ -36,8 +48,5 @@ mybatis:
   
 logging.level:
   org.hibernate.SQL: debug   # logger를 통해 하이버네이트 실행 SQL        
-      
-      
-      
-      
+
       
