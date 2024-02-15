@@ -12,11 +12,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping; 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.oracle.oBootMybatis01.model.Dept;
 import com.oracle.oBootMybatis01.model.DeptVO;
 import com.oracle.oBootMybatis01.model.Emp;
 import com.oracle.oBootMybatis01.model.EmpDept;
+import com.oracle.oBootMybatis01.model.Member1;
 import com.oracle.oBootMybatis01.service.EmpService;
 import com.oracle.oBootMybatis01.service.Paging;
 
@@ -312,6 +314,7 @@ public class EmpController {
 			model.addAttribute("msg", "정상입력되었습니다.");
 			model.addAttribute("dept", deptVO);
 		}
+		
 		return "writeDept3";
 	}
 	
@@ -319,9 +322,9 @@ public class EmpController {
 	@GetMapping(value = "writeDeptCursor")
 	public String writeDeptCursor(Model model) {
 	    System.out.println("EmpController writeDeptCursor Start...");
-	    // 파라미터 보내는 방식 3rkwl
-	    // Map : 유연함, 개발의 편의성, 유지보수가 어려움
-	    // DTO : 방식을 명확하게 확인가능 
+	    // 파라미터 보내는 방식 3가지
+	    // Map : 레이아웃을 정의해두고 사용하지 않음, 유연함, 개발의 편의성, 유지보수가 어려움, 서로 다른 회사이거나 부서가 다를 때 사용
+	    // DTO : 레이아웃을 명확히 정의해두고 사용, 방식을 명확하게 확인가능, 협업이 잘 이루어질때 사용
 	    // 부서범위 조회
 		HashMap<String,Object> map = new HashMap<String,Object>();
 		map.put("sDeptno", 10);
@@ -343,7 +346,55 @@ public class EmpController {
 		 return "writeDeptCursor";
 	}
 	
+	// InterCeptor 시작화면
+	@RequestMapping(value="interCeptorForm")
+	public String interCeptorForm(Model model) {
+		System.out.println("interCeptorForm Start...");
+		
+		return "interCeptorForm";
+	}
 	
+	// 2번 interCeptor Number2
+	@RequestMapping(value="interCeptor")
+	public String interCeptor(Member1 member1, Model model) {
+		System.out.println("EmpController interCeptor Test Start");
+		System.out.println("EmpController interCeptor id->" + member1.getId());
+		
+		// 존재 : 1, 비존재 : 0
+		int memCnt = es.memCount(member1.getId());
+		
+		System.out.println("EmpController interCeptor memCnt->" + memCnt);
+		
+		model.addAttribute("id", member1.getId());
+		model.addAttribute("memCnt", memCnt);
+		System.out.println("interCeptor Test End");
+		
+		return "interCeptor"; // User 존재하면 User 이용 조회 Page
+	}
+	
+	// SampleInterCeptor 내용을 받아 처리
+	@RequestMapping(value="doMemberWrite", method = RequestMethod.GET)
+	public String doMemberWrite(Model model, HttpServletRequest request) {
+		String ID = (String)request.getSession().getAttribute("ID");
+		System.out.println("doMemberWrite 부터 하세요");
+		model.addAttribute("id", ID);
+		
+		return "doMemberWrite";
+	}
+	
+	// interCeptor 진행 Test
+	@RequestMapping(value="doMemberList")
+	public String doMemberList(Model model, HttpServletRequest request) {
+		String ID = (String)request.getSession().getAttribute("ID");
+		System.out.println("doMemberList Test Start ID->" + ID);
+		Member1 member1 = null;
+		// Member1 List Get Service
+		List<Member1> listMem = es.listMem(member1);
+		model.addAttribute("ID", ID);
+		model.addAttribute("listMem", listMem);
+		
+		return "doMemberList"; // User 존재하면 User 이용 조희 Page
+	}
 	
 	
 	

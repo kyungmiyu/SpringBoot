@@ -74,5 +74,8 @@ public class MemberJpaController {
 	}
 	
 	
+	
+	
+	
 } // end of class
  
