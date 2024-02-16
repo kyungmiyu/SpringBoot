@@ -129,6 +129,7 @@ public class EmpDaoImpl implements EmpDao {
 		int totEmpCount = 0;
 		System.out.println("EmpDaoImpl condTotalEmp Start...");
 		System.out.println("EmpDaoImpl condTotalEmp Start emp->" + emp);
+		
 		try {
 			totEmpCount = session.selectOne("condEmpTotal", emp);
 			System.out.println("EmpDaoImpl totalEmp totEmpCount->" +totEmpCount);
@@ -158,13 +159,31 @@ public class EmpDaoImpl implements EmpDao {
 	public List<EmpDept> listEmpDept() {
 		System.out.println("EmpDaoImpl listEmpDept Start...");
 		List<EmpDept> empDept = null;
+		
 		try {
 			empDept = session.selectList("tkListEmpDept");
 			System.out.println("EmpDaoImpl listEmpDept empDept.size()->" + empDept.size());
 		} catch (Exception e) {
 			System.out.println("EmpDaoImpl listEmpDept Excpetion->" + e.getMessage());
 		}
+		
 		return empDept;
+	}
+
+	@Override
+	public String deptName(int deptno) {
+		System.out.println("EmpDaoImpl deptName Start...");
+		String resultStr = "";
+		
+		try {
+			System.out.println("EmpDaoImpl deptName detpno->"+deptno);
+			resultStr = session.selectOne("tkDeptName", deptno);
+			System.out.println("EmpDaoImpl deptName resultStr->" + resultStr);
+		} catch (Exception e) {
+			System.out.println("EmpDaoImpl deptName Exception->" + e.getMessage());
+		}
+		
+		return resultStr;
 	}
 	
 

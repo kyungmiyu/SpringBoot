@@ -51,6 +51,7 @@ public class UploadController {
 		
 		// service --> DB CRUD
 		
+		
 		log.info("Return savedName" + savedName);
 		model.addAttribute("savedName", savedName);
 
@@ -84,6 +85,7 @@ public class UploadController {
 //		tempFile.deleteOnExit();
 		
 		// Backup File
+		// 폴더를 지정해서 넣을수도있음
 		File tempFile3 = new File("c:/backup/" + savedName);
 		FileOutputStream outputStream3 = new FileOutputStream(tempFile3);
 		
@@ -128,6 +130,7 @@ public class UploadController {
 		int result = 0;
 		log.info("deleteFileName result-> " + deleteFileName);
 		File file = new File(deleteFileName);
+		
 		if (file.exists()) {
 			if(file.delete()) {
 				System.out.println("파일삭제 성공");
