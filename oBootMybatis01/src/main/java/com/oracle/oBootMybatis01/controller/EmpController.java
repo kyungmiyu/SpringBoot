@@ -434,7 +434,7 @@ public class EmpController {
 		return "listEmpAjaxForm";
 	}
 	
-	@ResponseBody
+	@ResponseBody //  this 클래스가 RestController가 아니기 때문에 @ResponseBody를 붙여서 Ajax 형태로 되돌려주기
 	@RequestMapping(value="empSerializeWrite")
 	public Map<String, Object> empSerializeWrite(@RequestBody @Valid Emp emp) {
 		System.out.println("EmpController Start...");
@@ -466,13 +466,47 @@ public class EmpController {
 		return "listEmpAjaxForm2";
 	}
 	
+	@RequestMapping(value="listEmpAjaxForm3")
+	public String listEmpAjaxForm3(Model model) {
+		System.out.println("listEmpAjaxForm3 Start...");
+		Emp emp = new Emp();
+		// Parameter emp --> Page만 추가 Setting
+		emp.setStart(1); // 시작시 1
+		emp.setEnd(15); // 시작시 15
+		List<Emp> listEmp = es.listEmp(emp);
+		model.addAttribute("listEmp", listEmp);
+		return "listEmpAjaxForm3";
+		
+	}
 	
+	@ResponseBody
+	@RequestMapping(value="empListUpdate")
+	public Map<String, Object> empListUpdate(@RequestBody @Valid List<Emp> listEmp) {
+		System.out.println("EmpController empListUpdate Start...");
+		int updateResult = 1;
+		
+		for(Emp emp : listEmp) {
+			System.out.println("EmpController empListUpdate emp->"+emp);
+		}
+		
+		// int writeResult = kkk.listUpdateEmp(emp);
+		// String followProStr = Integer.toString(followingPro);
+		System.out.println("EmpController empListUpdate writeResult->"+updateResult);
+		
+		Map<String, Object> resultMap = new HashMap<>();
+		return resultMap;
+	}
 	
-	
-	
-	
-	
-	
+	@ResponseBody
+	@RequestMapping(value="transactionInsertUpdate")
+	public String transactionInsertUpdate(Emp emp, Model model) {
+		System.out.println("EmpController transactionInsertUpdate Start...");
+		// Member Insert 성공과 실패
+		int returnMember = es.transactionInsertUpdate();
+		System.out.println("EmpController transactionInsertUpdate returnMember->"+returnMember);
+		String returnMemberString = String.valueOf(returnMember);
+		return returnMemberString;
+	}
 	
 	
 	

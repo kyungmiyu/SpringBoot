@@ -13,10 +13,11 @@
 		console.log(pDeptno)
 		// alert("pDeptno->"+pDeptno);
 		// 행동강령 : Ajax로 부서번호 보내고 부서명 받음
+		// request.getContextPath() : 루트부터 찾아 들어가라고 파일경로 적어주기
 		$.ajax({
 				url:"<%=request.getContextPath()%>/getDeptName",
 				data:{deptno : pDeptno},
-				dataType:'text',
+				dataType:'text', // response되는 데이터의 정보 파라미터 deptName의 타입이 text
 				success:function(deptName) {
 					// alert("success ajax Data->"+deptName);
 					$('#deptName').val(deptName); /* input Tag */
@@ -47,7 +48,7 @@
 		var sendData = $('#empTrans').serializeArray();
 		alert('sendData serializeArray()->' + sendData);
 		
-		sendData3 = jsonParse(sendData);
+		sendData3 = jsonParse(sendData); // 형식은 json 타입은 string
 		alert('sendData3-->' + sendData3);
 		console.log('sendData3-->' + sendData3);
 	
